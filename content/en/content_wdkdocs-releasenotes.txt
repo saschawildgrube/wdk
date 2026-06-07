@@ -1,6 +1,6 @@
 ={WDK} Release Notes= 
 ==Version 0.0.79==
-NOT YET Baselined
+Baselined 2026-06-07
 * '''IMPORTANT'''
 ** Semantic versioning is used from now on.
 ** All externak assets (JQuery, Bootstrap and Fontawesome) have been integrated into WDK to avoid loading them from external sources. This is to comply with a recent German court ruling which renders loading anything from external sources as illegal.
