@@ -1,5 +1,5 @@
 ={WDK} Release Notes= 
-==Version 0.0.79 WORK IN PROGRESS==
+==Version 0.0.79==
 NOT YET Baselined
 * '''IMPORTANT'''
 ** Semantic versioning is used from now on.
