@@ -3358,7 +3358,6 @@
 		{
 			$nFirstTagStartPos = 0;
 
-			$nOutputLen = StringLength($strOutput);            
 			$arrayTags = array();
 			foreach ($this->m_arrayGenericOutputItems as $strItemID => $arrayAttributeList)
 			{
