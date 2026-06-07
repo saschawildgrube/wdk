@@ -10,7 +10,7 @@ NOT YET Baselined
 * New features
 ** No changes
 * Improvements
-** No changes
+** CElement now uses a memory cache for loaded CFG and HTML files to improve rendering performance.
 * Discontinued
 ** No changes
 * Quality
