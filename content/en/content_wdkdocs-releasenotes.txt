@@ -14,7 +14,7 @@ NOT YET Baselined
 * Discontinued
 ** No changes
 * Quality
-** No changes
+** Avoiding the user name "test" in automated tests. Using "test.auto" instead.
 * Refactoring
 ** No changes
 * Documentation
