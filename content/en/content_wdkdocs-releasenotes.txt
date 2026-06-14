@@ -11,12 +11,13 @@ NOT YET Baselined
 ** No changes
 * Improvements
 ** CElement now uses a memory cache for loaded CFG and HTML files to improve rendering performance.
+** Removed not needed calls to deprecated imagedestroy().
 * Discontinued
 ** No changes
 * Quality
 ** Avoiding the user name "test" in automated tests. Using "test.auto" instead.
 * Refactoring
-** No changes
+** No changes 
 * Documentation
 ** No changes
 ==Version 0.0.79==
