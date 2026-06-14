@@ -3985,7 +3985,7 @@
 			$this->Trace("PrepareMessages END");
 			$this->ProfilingTrace();
 			
-			// Prepare OpenGrapg
+			// Prepare OpenGraph
 			$this->Trace("PrepareOpenGraph START");
 			$this->PrepareOpenGraph();
 			$this->Trace("PrepareOpenGraph END");
@@ -4077,10 +4077,12 @@
 				$strOutput = $this->ReplaceGenericOutputItems($strOutput);
 				$stopwatchReplaceGenericOutputItems->Stop();
 				
-				$this->ProfilingTrace();
-				$this->Trace("Rendering: RenderJavaScripts()"); 
-				$strOutput = $this->RenderJavaScripts($strOutput);
-
+				if ($nIteration > 2)
+				{
+					$this->ProfilingTrace();
+					$this->Trace("Rendering: RenderJavaScripts()"); 
+					$strOutput = $this->RenderJavaScripts($strOutput);
+				}
 				
 				$nIteration--;
    	      
@@ -4089,7 +4091,8 @@
 					$nNewOutputStrLen = StringLength($strOutput);
 					$this->Trace("Rendering: Old length: $nOldOutputStrLen");
 					$this->Trace("Rendering: New length: $nNewOutputStrLen");
-					if ($nNewOutputStrLen == $nOldOutputStrLen)
+					if (	$nNewOutputStrLen == $nOldOutputStrLen
+						&&	ArrayCount($this->m_arrayJavaScripts) == 0)
 					{
 						$nIteration = 0;
 					}

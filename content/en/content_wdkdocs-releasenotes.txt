@@ -12,6 +12,7 @@ NOT YET Baselined
 * Improvements
 ** CElement now uses a memory cache for loaded CFG and HTML files to improve rendering performance.
 ** Removed not needed calls to deprecated imagedestroy().
+** Rendering JavaScript code into the page only in later rendering iterations to improve performance.
 * Discontinued
 ** No changes
 * Quality
