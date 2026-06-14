@@ -129,6 +129,7 @@
 		private $m_elementSourceCode;
 		private $m_elementYouTube;
 		private $m_elementCountDown;
+		private $m_elementTableOfContents;
 		
 		private $m_arrayDynamicNavigationTree;
 		
@@ -1005,7 +1006,7 @@
 				}
 				else
 				{
-					$strOutput .= $this->RenderTrace();
+					$strOutput .= $this->RenderTraceLog();
 				}
 			}
 			else
@@ -5505,6 +5506,7 @@
 		function SetCondition($strCondition, $bValue)
 		{
 			$this->m_arrayConditions[StringUpperCase($strCondition)] = GetBoolValue($bValue);	
+			$this->m_cacheConditions->FlushCache();
 		}
 
 		final
