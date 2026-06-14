@@ -6,7 +6,7 @@ NOT YET Baselined
 * Security
 ** No changes
 * Defects
-** No changes
+** Fixed calls to non-existent functions in wdk_website.inc.
 * New features
 ** No changes
 * Improvements

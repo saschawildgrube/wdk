@@ -4607,7 +4607,7 @@
 			2. Check for static css dir then for assemblies
 			*/
 						
-			$strFilePath = $this->GetCssDir() . $this->MakeLayoutCssFileName($strLayout);
+			$strFilePath = $this->GetStyleSheetsDir() . $this->MakeLayoutCssFileName($strLayout);
 			$this->Trace($strFilePath);
 			if (IsFile($strFilePath))
 			{
@@ -4621,7 +4621,7 @@
 				return $strFilePath;	 
 			}			
 
-			$strFilePath = $this->GetCssDir() . $this->MakeLayoutCssFileName("default");
+			$strFilePath = $this->GetStyleSheetsDir() . $this->MakeLayoutCssFileName("default");
 			$this->Trace($strFilePath);
 			if (IsFile($strFilePath))
 			{
@@ -5142,6 +5142,12 @@
 			return true;
 		}
 
+		function OnUserLoadSettings()
+		{
+			$this->Error('OnUserLoadSettings() is not implemented.');
+			return false;
+		}
+
 
 		function OnParseSEOURL($strSEOURL)
 		{
@@ -5506,7 +5512,6 @@
 		function SetCondition($strCondition, $bValue)
 		{
 			$this->m_arrayConditions[StringUpperCase($strCondition)] = GetBoolValue($bValue);	
-			$this->m_cacheConditions->FlushCache();
 		}
 
 		final
