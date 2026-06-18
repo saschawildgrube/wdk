@@ -23,7 +23,7 @@
 * Update version in wdk.txt and add "WORK IN PROGRESS" after the version number
 * Add new version chapter in content_wdkdocs-releasenotes.txt:
 <pre>
-==Version 0.0.0.x WORK IN PROGRESS==
+==Version 0.0.x WORK IN PROGRESS==
 NOT YET Baselined
 * '''IMPORTANT'''
 ** No issues
