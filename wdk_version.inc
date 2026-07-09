@@ -46,11 +46,11 @@
 		return $arrayVersion;
 	}
 	
-	function CompareVersion($vVersion1, $vVersion2)
+	function CompareVersion($vVersion1, $vVersion2, $nComponents = 3)
 	{
 		if (!is_array($vVersion1))
 		{
-			$arrayVersion1 = ParseVersion($vVersion1);
+			$arrayVersion1 = ParseVersion($vVersion1, $nComponents);
 		}
 		else
 		{
@@ -58,7 +58,7 @@
 		}
 		if (!is_array($vVersion2))
 		{
-			$arrayVersion2 = ParseVersion($vVersion2);
+			$arrayVersion2 = ParseVersion($vVersion2, $nComponents);
 		}
 		else
 		{

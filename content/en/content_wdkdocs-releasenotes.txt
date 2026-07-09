@@ -11,6 +11,7 @@ NOT YET Baselined
 ** No changes
 * Improvements
 ** ParseVersion() now defaults to 3 version components - and hence assumes semantic versions by default.
+** CompareVersions() now supports the $nComponents parameter and defaults to sematic versions with 3 components.
 ** CElement now uses a memory cache for loaded CFG and HTML files to improve rendering performance.
 ** Removed not needed calls to deprecated imagedestroy().
 ** Rendering JavaScript code into the page only in later rendering iterations to improve performance.
