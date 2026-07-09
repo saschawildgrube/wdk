@@ -2,7 +2,7 @@
 
 	require_once(GetWDKDir()."wdk_compare.inc");
 
-	function ParseVersion($strVerboseVersion,$nComponents = 4)
+	function ParseVersion($strVerboseVersion,$nComponents = 3)
 	{
 		
 		$arrayVerboseVersionComponents = StringExplode($strVerboseVersion,"-",true,2);
