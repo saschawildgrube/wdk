@@ -133,7 +133,8 @@
 				"?TID_SERVERMANAGER_LABEL_LOAD_AVERAGE_5MINUTES?",
 				"?TID_SERVERMANAGER_LABEL_LOAD_AVERAGE_15MINUTES?",
 				"?TID_SERVERMANAGER_LABEL_DISK_USED_PERCENT?",
-				"?TID_SERVERMANAGER_LABEL_PLESK_STATUS?"); 
+				"?TID_SERVERMANAGER_LABEL_PLESK_STATUS?",
+				"?TID_SERVERMANAGER_LABEL_PLESK_VERSION?");
 			
 			$this->IncludeElement("format");
 			$formatError = new CFormatElement($this->GetWebsite(),"testfailed");
@@ -149,6 +150,7 @@
 				$strLoadAvg15 = "";
 				$strDiskUsedPct = "";
 				$strPleskStatus = "";
+				$strPleskVersion = "";
 				if ($strName != "")
 				{
 					$arrayWebservice = ArrayGetValue($arrayServer,"webservice");
@@ -209,6 +211,7 @@
 								$strDiskUsedPct = $formatError->RenderFormat($strDiskUsedPct);
 							}
 							$bPleskActive = $consumer->GetResultValue("PLESK_ACTIVE");
+							$strPleskVersion = $consumer->GetResultValue("PLESK_VERSION");
 						}
 						$strPleskLinkLabel = "?TID_ITEM_INACTIVE?";
 						if ($bPleskActive == true)
@@ -228,7 +231,8 @@
 					$strLoadAvg5,
 					$strLoadAvg15,
 					$strDiskUsedPct,
-					$strPleskStatus);
+					$strPleskStatus,
+					$strPleskVersion);
 			}
 			
 			$table = new CTableElement($this->GetWebsite(),"default");

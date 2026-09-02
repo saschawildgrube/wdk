@@ -60,6 +60,40 @@
 
 
 
+	function GetPleskVersion()
+	{
+		$arrayResult = array();
+		$bResult = ShellExecute(
+			"plesk",
+			array("version"),
+			array(),
+			"",
+			$arrayResult);
+		if ($bResult == false || ArrayGetValue($arrayResult,"return") != 0)
+		{
+			return "";
+		}
+
+		$strStdOut = ArrayGetValue($arrayResult,"stdout");
+		$arrayLines = StringExplode($strStdOut,"\n",true);
+		foreach ($arrayLines as $strLine)
+		{
+			if (FindString($strLine,"Product version:") == 0)
+			{
+				$strProductVersion = StringTrim(StringSection($strLine,16));
+				$arrayMatches = array();
+				if (preg_match('/[0-9]+(?:\.[0-9]+)+/', $strProductVersion, $arrayMatches) == 1)
+				{
+					return ArrayGetValue($arrayMatches,0);
+				}
+				return "";
+			}
+		}
+		return "";
+	}
+
+
+
 	function GetMailQueueSize()
 	{
 		$arrayResult = array();

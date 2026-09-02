@@ -173,6 +173,7 @@
 				$bPleskActive = true;
 			}
 			$this->SetResultValue(RenderInteger($bPleskActive),'PLESK_ACTIVE');	
+			$this->SetResultValue(GetPleskVersion(),'PLESK_VERSION');
 			$this->SetResultValue(GetFileSize('/var/log/plesk/panel.log',true),'PLESK_PANELLOG_FILESIZE');
 			
 			$this->Trace('');				

@@ -9,6 +9,7 @@ NOT YET Baselined
 ** Fixed calls to non-existent functions in wdk_website.inc.
 * New features
 ** CWikiElement now supports the MediaWiki-style &lt;syntaxhighlight&gt; tag with an optional language attribute. The &lt;syntaxhighlighting&gt; alias is also supported.
+** Added GetPleskVersion(). The system/server status command now returns the installed Plesk version and CServerManagerModule displays it.
 * Improvements
 ** ParseVersion() now defaults to 3 version components - and hence assumes semantic versions by default.
 ** CompareVersions() now supports the $nComponents parameter and defaults to sematic versions with 3 components.
