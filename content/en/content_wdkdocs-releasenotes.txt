@@ -11,6 +11,7 @@ NOT YET Baselined
 ** CWikiElement now supports the MediaWiki-style &lt;syntaxhighlight&gt; tag with an optional language attribute. The &lt;syntaxhighlighting&gt; alias is also supported.
 ** Added GetPleskVersion(). The system/server status command now returns the installed Plesk version and CServerManagerModule displays it.
 ** Added GetVersionInfoOS(). The system/server status command and CServerManagerModule now expose the operating system name and version.
+** CServerManagerModule now compares Plesk versions and highlights servers below the highest detected version.
 * Improvements
 ** ParseVersion() now defaults to 3 version components - and hence assumes semantic versions by default.
 ** CompareVersions() now supports the $nComponents parameter and defaults to sematic versions with 3 components.

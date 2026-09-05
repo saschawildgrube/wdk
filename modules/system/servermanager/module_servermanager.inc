@@ -2,6 +2,7 @@
 
 	require_once(GetWDKDir()."wdk_module.inc");
 	require_once(GetWDKDir()."wdk_ip.inc");
+	require_once(GetWDKDir()."wdk_version.inc");
 	
 	class CServerManagerModule extends CModule
 	{
@@ -141,6 +142,8 @@
 			$this->IncludeElement("format");
 			$formatError = new CFormatElement($this->GetWebsite(),"testfailed");
 			$formatUp = new CFormatElement($this->GetWebsite(),"testpassed");
+			$arrayPleskVersions = array();
+			$strHighestPleskVersion = "";
 			
 			foreach ($arrayServers as $arrayServer)
 			{
@@ -241,6 +244,23 @@
 					$strPleskVersion,
 					$strOSName,
 					$strOSVersion);
+				$arrayPleskVersions[] = $strPleskVersion;
+				if ($strPleskVersion != "" &&
+					($strHighestPleskVersion == "" || CompareVersion($strPleskVersion,$strHighestPleskVersion,4) > 0))
+				{
+					$strHighestPleskVersion = $strPleskVersion;
+				}
+			}
+
+			if ($strHighestPleskVersion != "")
+			{
+				foreach ($arrayPleskVersions as $nServerIndex => $strPleskVersion)
+				{
+					if ($strPleskVersion != "" && CompareVersion($strPleskVersion,$strHighestPleskVersion,4) < 0)
+					{
+						$arrayDashboard[$nServerIndex+1][8] = $formatError->RenderFormat($strPleskVersion);
+					}
+				}
 			}
 			
 			$table = new CTableElement($this->GetWebsite(),"default");
