@@ -23,9 +23,22 @@ class JsonEditorField extends React.Component
 				'aria-invalid': !!this.state.error, title: this.state.error,
 				onFocus: () => { this.focused = true; },
 				onChange: event => { this.setState({ draft: event.target.value, error: '' }); if (this.props.onInput) this.props.onInput(event.target.value); },
-				onBlur: () => { this.focused = false; this.commit(); },
+				onBlur: () => { this.focused = false; if (!this.skipBlurCommit) this.commit(); this.skipBlurCommit = false; },
 				onKeyDown: event => {
-					if (event.key === 'Enter') { event.preventDefault(); this.commit(); }
+					if (event.key === 'Tab' && !event.shiftKey && this.props.onTab)
+					{
+						event.preventDefault();
+						this.skipBlurCommit = true;
+						const error = this.props.onTab(this.state.draft);
+						if (error) { this.skipBlurCommit = false; this.setState({ error: error }); }
+						return;
+					}
+					if (event.key === 'Enter')
+					{
+						event.preventDefault();
+						if (this.props.onEnter) { this.skipBlurCommit = true; this.props.onEnter(this.state.draft); }
+						else this.commit();
+					}
 					if (event.key === 'Escape') this.setState({ draft: this.props.value, error: '' });
 				}
 			}),
@@ -37,18 +50,20 @@ class JsonEditorField extends React.Component
 class JsonEditorNewRow extends React.Component
 {
 	constructor(props) { super(props); this.state = { name: '', value: '', error: '', type: null }; }
-	commit()
+	commit(focusNext = false)
 	{
 		if (!this.state.name && !this.state.value && this.state.type === null) return;
 		const error = this.props.onAdd(this.state.name, this.state.value, this.state.type);
 		if (error) this.setState({ error: error });
-		else this.setState({ name: '', value: '', error: '', type: null });
+		else this.setState({ name: '', value: '', error: '', type: null }, () => {
+			if (focusNext && this.firstInput) this.firstInput.focus();
+		});
 	}
 	render()
 	{
-		return e('div', { className: 'jsoneditor-row jsoneditor-new-row', onBlur: event => { if (!event.currentTarget.contains(event.relatedTarget)) this.commit(); }, onKeyDown: event => { if (event.key === 'Enter') { event.preventDefault(); this.commit(); } } },
-			this.props.array ? e('span', {}, 'New item') : e('input', { className: 'jsoneditor-key', placeholder: 'New key', 'aria-label': 'New property name', value: this.state.name, onChange: event => this.setState({ name: event.target.value, error: '' }) }),
-			e('input', { className: 'jsoneditor-value', placeholder: 'Value', 'aria-label': 'New value', value: this.state.value, onChange: event => this.setState({ value: event.target.value, error: '', type: null }) }),
+		return e('div', { className: 'jsoneditor-row jsoneditor-new-row', onBlur: event => { if (!event.currentTarget.contains(event.relatedTarget)) this.commit(); }, onKeyDown: event => { if (event.key === 'Enter') { event.preventDefault(); this.commit(true); } } },
+			this.props.array ? e('span', {}, 'New item') : e('input', { ref: input => { this.firstInput = input; }, className: 'jsoneditor-key', placeholder: 'New key', 'aria-label': 'New property name', value: this.state.name, onChange: event => this.setState({ name: event.target.value, error: '' }) }),
+			e('input', { ref: this.props.array ? input => { this.firstInput = input; } : undefined, className: 'jsoneditor-value', placeholder: 'Value', 'aria-label': 'New value', value: this.state.value, onChange: event => this.setState({ value: event.target.value, error: '', type: null }) }),
 			e('select', { 'aria-label': 'New value type', value: this.state.type || this.props.detectType(this.state.value), onChange: event => {
 				const type = event.target.value, defaults = { string: this.state.value, number: '0', boolean: 'false', null: 'null', object: '{}', array: '[]' };
 				this.setState({ type: type, value: defaults[type] });
@@ -233,23 +248,33 @@ class JsonEditor extends WDKReactComponent
 		}
 		this.setState({ data: data, raw: JSON.stringify(data, null, 2) });
 	}
-	rename(path, name)
+	rename(path, name, focusValue = false)
 	{
 		const oldName = path[path.length - 1];
-		if (name === oldName) return '';
+		if (name === oldName) { if (focusValue) this.focusRow(path, true); return ''; }
 		const parentPath = path.slice(0, -1);
 		const parent = this.get(this.state.data, parentPath);
 		if (Object.prototype.hasOwnProperty.call(parent, name)) return 'This property already exists.';
 		const replacement = {};
 		Object.keys(parent).forEach(key => this.put(replacement, key === oldName ? name : key, parent[key]));
 		this.change(parentPath, replacement);
+		if (focusValue) this.setState({}, () => this.focusRow(parentPath.concat(name), true));
 		return '';
 	}
 	add(path, after = null, name = null, initial = '', focus = false)
 	{
 		if (this.state.error) return 'Correct the raw JSON before adding a property.';
 		const value = JSON.parse(JSON.stringify(this.get(this.state.data, path)));
-		if (Array.isArray(value)) value.splice(after === null ? 0 : after + 1, 0, initial);
+		if (Array.isArray(value))
+		{
+			// Plus-created items use the first object's keys, without copying its data.
+			if (name === null && initial === '' && this.type(value[0]) === 'object')
+			{
+				initial = {};
+				Object.keys(value[0]).forEach(key => this.put(initial, key, ''));
+			}
+			value.splice(after === null ? 0 : after + 1, 0, initial);
+		}
 		else
 		{
 			if (name === null) { name = 'newKey'; let suffix = 1; while (Object.prototype.hasOwnProperty.call(value, name)) name = 'newKey' + suffix++; }
@@ -265,10 +290,29 @@ class JsonEditor extends WDKReactComponent
 		this.setState(state => ({ collapsed: Object.assign({}, state.collapsed, { [JSON.stringify(path)]: false }) }), () => { if (focus) this.focusRow(path.concat(after === null ? 0 : after + 1)); });
 		return '';
 	}
-	focusRow(path)
+	focusRow(path, value = false)
 	{
-		const input = this.rowInputs && this.rowInputs[JSON.stringify(path)];
+		const input = this.rowInputs && this.rowInputs[JSON.stringify(path) + (value ? ':value' : '')];
 		if (input) { input.focus(); input.select(); }
+	}
+	enterValue(path, draft)
+	{
+		this.change(path, this.infer(draft));
+		this.setState({}, () => {
+			if (!path.length) return;
+			const parentPath = path.slice(0, -1), parent = this.get(this.state.data, parentPath);
+			const keys = Object.keys(parent), index = keys.indexOf(String(path[path.length - 1]));
+			if (index + 1 < keys.length)
+			{
+				const next = keys[index + 1];
+				this.focusRow(parentPath.concat(Array.isArray(parent) ? Number(next) : next));
+			}
+			else
+			{
+				const row = this.draftRows && this.draftRows[JSON.stringify(parentPath)];
+				if (row && row.firstInput) row.firstInput.focus();
+			}
+		});
 	}
 	rememberInput(id, input)
 	{
@@ -294,8 +338,8 @@ class JsonEditor extends WDKReactComponent
 		return e('div', { key: id },
 			e('div', { className: 'jsoneditor-row jsoneditor-type-' + type },
 				branch && this.button(closed ? '+' : '−', () => this.setState(state => ({ collapsed: Object.assign({}, state.collapsed, { [id]: !closed }) })), { 'aria-expanded': !closed, 'aria-label': (closed ? 'Expand ' : 'Collapse ') + label }),
-				path.length && !parentIsArray ? e(JsonEditorField, { className: 'jsoneditor-key', value: label, label: 'Property name', inputRef: input => this.rememberInput(id, input), onCommit: name => this.rename(path, name) }) : e('strong', {}, label),
-				e(JsonEditorField, { className: 'jsoneditor-value', value: this.valueText(value), label: 'Value of ' + label, inputRef: parentIsArray ? input => this.rememberInput(id, input) : undefined, onInput: draft => this.change(path, this.infer(draft)), onCommit: draft => { this.change(path, this.infer(draft)); return ''; } }),
+				path.length && !parentIsArray ? e(JsonEditorField, { className: 'jsoneditor-key', value: label, label: 'Property name', inputRef: input => this.rememberInput(id, input), onCommit: name => this.rename(path, name), onTab: name => this.rename(path, name, true) }) : e('strong', {}, label),
+				e(JsonEditorField, { className: 'jsoneditor-value', value: this.valueText(value), label: 'Value of ' + label, inputRef: input => { this.rememberInput(id + ':value', input); if (parentIsArray) this.rememberInput(id, input); }, onInput: draft => this.change(path, this.infer(draft)), onEnter: draft => this.enterValue(path, draft), onCommit: draft => { this.change(path, this.infer(draft)); return ''; } }),
 				e('select', { value: type, 'aria-label': 'Type of ' + label, onChange: event => this.change(path, event.target.value === 'string' ? this.valueText(value) : defaults[event.target.value]) },
 					Object.keys(defaults).map(name => e('option', { key: name, value: name }, name))),
 				branch && e('span', {}, Object.keys(value).length + (type === 'array' ? ' items' : ' properties')),
@@ -303,7 +347,7 @@ class JsonEditor extends WDKReactComponent
 				path.length > 0 && this.button(e('span', { className: 'fa fa-plus', 'aria-hidden': true }), () => this.add(path.slice(0, -1), path[path.length - 1], null, '', true), { className: 'jsoneditor-add', title: 'Insert after ' + label, 'aria-label': 'Insert after ' + label }),
 				path.length > 0 && this.button(e('span', { className: 'fa fa-remove', 'aria-hidden': true }), () => this.change(path, null, true), { className: 'jsoneditor-delete', title: 'Delete ' + label, 'aria-label': 'Delete ' + label })),
 			branch && !closed && e('div', { className: 'jsoneditor-children' }, Object.keys(value).map(key => this.node(value[key], path.concat(type === 'array' ? Number(key) : key), type === 'array')),
-				e(JsonEditorNewRow, { key: 'draft', array: type === 'array', detectType: text => this.type(this.infer(text)), onAdd: (name, text, selectedType) => {
+				e(JsonEditorNewRow, { key: 'draft', ref: row => { if (!this.draftRows) this.draftRows = {}; this.draftRows[id] = row; }, array: type === 'array', detectType: text => this.type(this.infer(text)), onAdd: (name, text, selectedType) => {
 					const keys = Object.keys(value), after = keys.length ? (type === 'array' ? value.length - 1 : keys[keys.length - 1]) : null;
 					return this.add(path, after, name, selectedType === 'string' ? text : this.infer(text));
 				} })));
@@ -317,8 +361,6 @@ class JsonEditor extends WDKReactComponent
 	render()
 	{
 		return e('div', {},
-			e('div', { className: 'jsoneditor-toolbar' },
-				this.button('Format JSON', () => this.setState({ raw: JSON.stringify(this.state.data, null, 2) }), { disabled: !!this.state.error })),
 			this.state.error && e('p', { className: 'jsoneditor-error', role: 'alert' }, 'Invalid JSON: ' + this.state.error + ' The tree shows the last valid JSON. Correct the raw text to resume editing.'),
 			e('div', { className: 'jsoneditor-panes' },
 				e('section', { className: 'jsoneditor-pane' + (this.state.rawVisible ? '' : ' jsoneditor-pane-collapsed'), 'aria-label': 'Raw JSON' },
@@ -326,7 +368,7 @@ class JsonEditor extends WDKReactComponent
 					e('div', { className: 'jsoneditor-raw-container', hidden: !this.state.rawVisible },
 						e('pre', { className: 'jsoneditor-highlight', 'aria-hidden': true, ref: element => { this.rawHighlight = element; } },
 							this.tokens(this.state.raw).map(token => e('span', { key: token.start, className: 'jsoneditor-token-' + token.type }, token.text)), '\n'),
-						e('textarea', { className: 'jsoneditor-raw', value: this.state.raw, wrap: 'off', spellCheck: false, autoCapitalize: 'off', autoCorrect: 'off', 'aria-label': 'Raw JSON. Tab selects the next key or value; Shift+Tab selects the previous one. At either end, Tab leaves the editor.', 'aria-invalid': !!this.state.error, ref: element => { this.rawInput = element; }, onScroll: () => this.syncRawScroll(), onKeyDown: event => this.rawKeyDown(event), onChange: event => this.parse(event.target.value) }))),
+						e('textarea', { className: 'jsoneditor-raw', value: this.state.raw, wrap: 'off', spellCheck: false, autoCapitalize: 'off', autoCorrect: 'off', 'aria-label': 'Raw JSON. Tab selects the next key or value; Shift+Tab selects the previous one. At either end, Tab leaves the editor.', 'aria-invalid': !!this.state.error, ref: element => { this.rawInput = element; }, onScroll: () => this.syncRawScroll(), onKeyDown: event => this.rawKeyDown(event), onBlur: () => { if (!this.state.error) this.setState({ raw: JSON.stringify(this.state.data, null, 2) }); }, onChange: event => this.parse(event.target.value) }))),
 				e('section', { className: 'jsoneditor-pane' + (this.state.treeVisible ? '' : ' jsoneditor-pane-collapsed'), 'aria-label': 'JSON tree' },
 					this.paneHeader('Tree editor', 'treeVisible'), e('div', { className: 'jsoneditor-tree', hidden: !this.state.treeVisible }, e('fieldset', { disabled: !!this.state.error, key: this.state.revision }, this.node(this.state.data, [], false))))));
 	}
