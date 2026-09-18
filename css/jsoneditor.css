@@ -7,6 +7,14 @@
 .wdk-jsoneditor .jsoneditor-panes { display: flex; gap: 0; width: 100%; }
 .wdk-jsoneditor .jsoneditor-pane { flex: 1 1 0; min-width: 0; }
 .wdk-jsoneditor .jsoneditor-pane-header { display: flex; align-items: center; justify-content: space-between; height: 36px; padding: 0 3px; background: #536640; color: #f5f8ef; border: 1px solid #687b55; }
+.wdk-jsoneditor .jsoneditor-shared-toolbar { display: flex; align-items: center; gap: 5px; min-height: 38px; padding: 3px 6px; background: #536640; color: #f5f8ef; border: 1px solid #687b55; }
+.wdk-jsoneditor .jsoneditor-pane-header { justify-content: flex-end; height: 28px; background: #30353c; border-color: #59616b; }
+.wdk-jsoneditor .jsoneditor-search-hit { background: #6b5620; border-radius: 2px; box-shadow: inset 0 -2px #f2cd66; }
+.wdk-jsoneditor .jsoneditor-search-hit input { background: #6b5620; }
+.wdk-jsoneditor .jsoneditor-row > .jsoneditor-type-picker { position: relative; display: inline-flex; align-items: center; justify-content: center; flex: 0 0 26px !important; width: 26px; height: 26px; overflow: visible !important; }
+.wdk-jsoneditor .jsoneditor-type-picker > .fa { pointer-events: none; color: #c6d2e0; }
+.wdk-jsoneditor .jsoneditor-type-picker select { position: absolute; inset: 0; width: 100%; height: 100%; appearance: none; -webkit-appearance: none; color: transparent !important; cursor: pointer; padding: 0; }
+.wdk-jsoneditor .jsoneditor-type-picker select option { color: #f1f3f5; background: #383d45; }
 .wdk-jsoneditor .jsoneditor-pane-tools { display: flex; gap: 2px; align-items: center; flex: 1; min-width: 0; }
 .wdk-jsoneditor .jsoneditor-tool, .wdk-jsoneditor .jsoneditor-pane-toggle { flex-shrink: 0; border: 0; border-radius: 3px; background: transparent; color: inherit; cursor: pointer; min-width: 24px; height: 28px; }
 .wdk-jsoneditor .jsoneditor-tool:hover, .wdk-jsoneditor .jsoneditor-pane-toggle:hover { background: #ffffff25; }
