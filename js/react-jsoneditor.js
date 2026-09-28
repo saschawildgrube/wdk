@@ -136,7 +136,8 @@ class JsonEditor extends WDKReactComponent
 	}
 	rawRanges()
 	{
-		const ranges = [], stack = [];
+		const ranges = [], stack = [], paths = {};
+		if (!this.state.error) this.sourceRange([], paths);
 		let quoted = false, escaped = false, line = 0;
 		for (let index = 0; index < this.state.raw.length; index++)
 		{
@@ -146,7 +147,7 @@ class JsonEditor extends WDKReactComponent
 			if (quoted && character === '\\') { escaped = true; continue; }
 			if (character === '"') { quoted = !quoted; continue; }
 			if (quoted) continue;
-			if (character === '{' || character === '[') stack.push({ start: index, line: line, open: character });
+			if (character === '{' || character === '[') stack.push({ start: index, line: line, open: character, path: paths[index] });
 			else if (character === '}' || character === ']')
 			{
 				const range = stack.pop();
@@ -155,9 +156,23 @@ class JsonEditor extends WDKReactComponent
 		}
 		return ranges.sort((a, b) => a.start - b.start);
 	}
-	hasRawFolds() { return Object.values(this.state.rawCollapsed || {}).some(Boolean); }
+	rawRangeClosed(range)
+	{
+		return range.path !== undefined ? !!this.state.collapsed[JSON.stringify(range.path)] : !!(this.state.rawCollapsed || {})[range.line];
+	}
+	hasRawFolds() { return this.rawRanges().some(range => this.rawRangeClosed(range)); }
+	toggleBranch(path)
+	{
+		this.setState(state => ({
+			collapsed: Object.assign({}, state.collapsed, { [JSON.stringify(path)]: !state.collapsed[JSON.stringify(path)] }),
+			// Give compact branches separate source lines so they can fold too.
+			raw: state.error ? state.raw : JSON.stringify(state.data, null, 2)
+		}));
+	}
 	toggleRawFold(line)
 	{
+		const range = this.rawRanges().find(item => item.line === line);
+		if (range && range.path !== undefined) { this.toggleBranch(range.path); return; }
 		this.setState(state => ({ rawCollapsed: Object.assign({}, state.rawCollapsed, { [line]: !(state.rawCollapsed || {})[line] }) }));
 	}
 	rawLines()
@@ -165,7 +180,7 @@ class JsonEditor extends WDKReactComponent
 		const lines = this.state.raw.split('\n'), ranges = this.rawRanges(), output = [];
 		for (let line = 0; line < lines.length; line++)
 		{
-			const range = ranges.find(item => item.line === line), closed = range && (this.state.rawCollapsed || {})[line];
+			const range = ranges.find(item => item.line === line), closed = range && this.rawRangeClosed(range);
 			let text = lines[line];
 			if (closed)
 			{
@@ -180,7 +195,7 @@ class JsonEditor extends WDKReactComponent
 	}
 	editRaw()
 	{
-		this.setState({ rawCollapsed: {} }, () => { if (this.rawInput) this.rawInput.focus(); });
+		this.setState({ collapsed: {}, rawCollapsed: {} }, () => { if (this.rawInput) this.rawInput.focus(); });
 	}
 	rawKeyDown(event)
 	{
@@ -423,13 +438,14 @@ class JsonEditor extends WDKReactComponent
 		if (token.text[0] === '"') { try { decoded = JSON.parse(token.text); } catch (error) {} }
 		return e('span', { key: token.start, className: 'jsoneditor-token-' + token.type + (this.matchText(decoded) ? ' jsoneditor-search-hit' : '') }, token.text);
 	}
-	sourceRange(path)
+	sourceRange(path, paths)
 	{
 		const tokens = Array.from(this.state.raw.matchAll(/"(?:\\.|[^"\\])*"|-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?|true|false|null|[{}\[\],:]/g));
 		let index = 0, found = null;
 		const visit = current => {
 			const token = tokens[index++]; if (!token) return;
 			const start = token.index;
+			if (paths) paths[start] = current;
 			if (token[0] === '{')
 			{
 				while (tokens[index] && tokens[index][0] !== '}') { const key = JSON.parse(tokens[index++][0]); index++; visit(current.concat(key)); if (tokens[index] && tokens[index][0] === ',') index++; }
@@ -517,7 +533,7 @@ class JsonEditor extends WDKReactComponent
 		const defaults = { string: '', number: 0, boolean: false, null: null, object: {}, array: [] };
 		return e('div', { key: id },
 			e('div', { className: 'jsoneditor-row jsoneditor-type-' + type + (JSON.stringify(this.state.activePath) === id ? ' jsoneditor-row-active' : ''), onFocus: () => { if (JSON.stringify(this.state.activePath) !== id) this.setState({ activePath: path }); } },
-				branch ? this.iconButton(closed ? 'caret-right' : 'caret-down', (closed ? 'Expand ' : 'Collapse ') + label, () => this.setState(state => ({ collapsed: Object.assign({}, state.collapsed, { [id]: !closed }) })), { 'aria-expanded': !closed }) : e('span', { className: 'jsoneditor-leaf-spacer', 'aria-hidden': true }),
+				branch ? this.iconButton(closed ? 'caret-right' : 'caret-down', (closed ? 'Expand ' : 'Collapse ') + label, () => this.toggleBranch(path), { 'aria-expanded': !closed }) : e('span', { className: 'jsoneditor-leaf-spacer', 'aria-hidden': true }),
 				path.length && !parentIsArray ? e(JsonEditorField, { className: 'jsoneditor-key' + (this.matchText(label) ? ' jsoneditor-search-hit' : ''), value: label, label: 'Property name', inputRef: input => this.rememberInput(id, input), onCommit: name => this.rename(path, name), onTab: name => this.rename(path, name, true) }) : e('strong', {}, label),
 				e(JsonEditorField, { className: 'jsoneditor-value' + (!branch && this.matchText(this.valueText(value)) ? ' jsoneditor-search-hit' : ''), value: this.valueText(value), label: 'Value of ' + label, inputRef: input => { this.rememberInput(id + ':value', input); if (parentIsArray) this.rememberInput(id, input); }, onInput: draft => this.change(path, this.infer(draft)), onEnter: draft => this.enterValue(path, draft), onCommit: draft => { this.change(path, this.infer(draft)); return ''; } }),
 				e(JsonEditorType, { value: type, label: 'Type of ' + label, onChange: event => this.change(path, event.target.value === 'string' ? this.valueText(value) : defaults[event.target.value]) }),
