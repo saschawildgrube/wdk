@@ -91,6 +91,29 @@ class JsonEditor extends WDKReactComponent
 		super(props);
 		this.state = { raw: '{}', data: {}, error: '', rawVisible: true, treeVisible: true, collapsed: {}, revision: 0, split: 50, query: '', searchIndex: -1, activePath: [], line: 1, column: 1 };
 	}
+	componentDidMount()
+	{
+		super.componentDidMount();
+		this.fullscreenChanged = () => this.setState({ fullscreen: document.fullscreenElement === this.editor, fullscreenError: '' });
+		document.addEventListener('fullscreenchange', this.fullscreenChanged);
+	}
+	componentWillUnmount()
+	{
+		document.removeEventListener('fullscreenchange', this.fullscreenChanged);
+		super.componentWillUnmount();
+	}
+	async setFullscreen(enabled)
+	{
+		try
+		{
+			if (enabled) await this.editor.requestFullscreen();
+			else if (document.fullscreenElement === this.editor) await document.exitFullscreen();
+		}
+		catch (error)
+		{
+			if (this.IsMounted()) this.setState({ fullscreenError: 'Unable to ' + (enabled ? 'enter' : 'exit') + ' full screen in this browser.' });
+		}
+	}
 	type(value) { return value === null ? 'null' : Array.isArray(value) ? 'array' : typeof value; }
 	// Preserve every character, including incomplete JSON, for the highlighting layer.
 	tokens(raw)
@@ -560,12 +583,16 @@ class JsonEditor extends WDKReactComponent
 			this.iconButton(expand ? 'expand' : 'compress', expand ? 'Expand all' : 'Collapse all', () => this.toggleAll()),
 			this.hasRawFolds() && this.iconButton('pencil', 'Expand folds to edit source', () => this.editRaw()),
 			e('input', { className: 'jsoneditor-search', type: 'search', placeholder: 'Find key or value', 'aria-label': 'Find key or value', value: this.state.query, onChange: event => this.setState({ query: event.target.value, searchIndex: -1, searchMessage: '' }), onKeyDown: event => { if (event.key === 'Enter') { event.preventDefault(); this.findNext(event.shiftKey); } } }),
-			this.iconButton('search', 'Find next (Enter)', () => this.findNext()));
+			this.iconButton('search', 'Find next (Enter)', () => this.findNext()),
+			e('span', { className: 'jsoneditor-view-controls' },
+				this.button('Full screen', () => this.setFullscreen(true), { className: 'jsoneditor-tool jsoneditor-mode', hidden: !!this.state.fullscreen }),
+				this.button('Normal view', () => this.setFullscreen(false), { className: 'jsoneditor-tool jsoneditor-mode', hidden: !this.state.fullscreen })));
 	}
 	render()
 	{
-		return e('div', {},
+		return e('div', { className: 'jsoneditor-editor', ref: element => { this.editor = element; } },
 			this.sharedToolbar(),
+			this.state.fullscreenError && e('p', { className: 'jsoneditor-error', role: 'alert' }, this.state.fullscreenError),
 			this.state.error && e('p', { className: 'jsoneditor-error', role: 'alert' }, 'Invalid JSON: ' + this.state.error + ' The tree shows the last valid JSON. Correct the raw text to resume editing.'),
 			e('div', { className: 'jsoneditor-panes', ref: element => { this.panes = element; } },
 				e('section', { style: this.state.rawVisible ? { flexGrow: this.state.treeVisible ? this.state.split : 1 } : {}, className: 'jsoneditor-pane' + (this.state.rawVisible ? '' : ' jsoneditor-pane-collapsed'), 'aria-label': 'Raw JSON' },
