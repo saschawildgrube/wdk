@@ -58,7 +58,7 @@
 .wdk-jsoneditor .jsoneditor-new-row { padding-top: .4rem; border-top: 1px dashed #78818e; }
 .wdk-jsoneditor .jsoneditor-draft-type { color: #c0c7d2; }
 .wdk-jsoneditor .jsoneditor-raw-container { position: relative; height: 65vh; min-height: 320px; background: #383d45; }
-.wdk-jsoneditor .jsoneditor-raw, .wdk-jsoneditor .jsoneditor-highlight { position: absolute; top: 0; left: 64px; width: calc(100% - 64px); height: 100%; margin: 0; padding: .75rem; border: 1px solid #59616b; border-radius: 0; font: 14px/1.5 monospace; letter-spacing: normal; text-align: left; white-space: pre; overflow-wrap: normal; word-break: normal; tab-size: 4; overflow: scroll; }
+.wdk-jsoneditor .jsoneditor-raw, .wdk-jsoneditor .jsoneditor-highlight { position: absolute; top: 0; left: 64px; width: calc(100% - 64px); height: 100%; margin: 0; padding: .75rem; border: 1px solid #59616b; border-radius: 0; font: 14px/1.5 monospace; letter-spacing: normal; text-align: left; white-space: pre; overflow-wrap: normal; word-break: normal; tab-size: 4; overflow: auto; }
 .wdk-jsoneditor .jsoneditor-highlight { pointer-events: none; color: #f1f3f5; background: transparent; scrollbar-color: transparent transparent; }
 .wdk-jsoneditor .jsoneditor-highlight::-webkit-scrollbar { visibility: hidden; }
 .wdk-jsoneditor .jsoneditor-raw { resize: none; color: transparent; -webkit-text-fill-color: transparent; caret-color: #ffffff; background: transparent; }
