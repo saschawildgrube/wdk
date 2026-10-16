@@ -3,9 +3,9 @@
 echo ""
 echo ""
 
-echo "#####################"
-echo "Perform Server Check"
-echo "#####################"
+echo "############"
+echo "Server Check"
+echo "############"
 echo ""
 
 uptime
