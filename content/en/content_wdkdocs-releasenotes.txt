@@ -4,6 +4,9 @@ NOT YET Baselined
 * '''IMPORTANT'''
 ** Deploy the bundled phpseclib directory under /wdk together with wdk_encryption-symmetric.inc. Rijndael encryption no longer requires mcrypt; other historical algorithms still require the extension.
 * Security
+** Updated symmetric Rijndael-128, Rijndael-192 and Rijndael-256 encryption for PHP 7.4.33 using the bundled phpseclib 2.0.55 implementation. Legacy key derivation, CBC mode, zero padding and payload handling are retained for binary compatibility in both directions with the mcrypt implementation.
+** IsMcryptSupported() checks for the mcrypt extension and is used by the legacy mcrypt code paths and the bidirectional compatibility test. Removed mcrypt availability guards from encryption callers and regular tests because phpseclib is a bundled dependency.
+** CMonitoringUnitTest::TestCase_Server() now fails if PHP is below 7.4.33 due to potential exposure to CVE-2026-109618 and CVE-2026-109619.
 ** MakeInitVector() now uses random_bytes() for Rijndael initialization vectors.
 ** Static file viewing and downloading now resolve file paths within the configured root directory, rejecting files outside that directory.
 * Defects
@@ -36,8 +39,7 @@ NOT YET Baselined
 ** Avoiding the user name "test" in automated tests. Using "test.auto" instead.
 ** Added automated Wiki element coverage for syntax highlighting, literal Wiki markup and HTML escaping.
 * Refactoring
-** Updated symmetric Rijndael-128, Rijndael-192 and Rijndael-256 encryption for PHP 7.4.33 using the bundled phpseclib 2.0.55 implementation. Legacy key derivation, CBC mode, zero padding and payload handling are retained for binary compatibility in both directions with the mcrypt implementation.
-** IsMcryptSupported() checks for the mcrypt extension and is used by the legacy mcrypt code paths and the bidirectional compatibility test. Removed mcrypt availability guards from encryption callers and regular tests because phpseclib is a bundled dependency.
+** No changes
 * Documentation
 ** No changes
 ==Version 0.0.79==
