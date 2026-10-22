@@ -34,7 +34,7 @@ NOT YET Baselined
 * Discontinued
 ** No changes
 * Quality
-** Deactivated tests for ebury and openssl build date - to maintain compatibility with FPM PHP runmode.
+** Deactivated tests for source code write access, ebury and openssl build date - to maintain compatibility with FPM PHP runmode.
 ** Added symmetric encryption round-trip, initialization-vector validation, block-boundary and NUL-byte tests. When mcrypt is installed, tests also check byte-for-byte ciphertext equality and decryption in both directions. Runtime verification on PHP 7.4.33 and an mcrypt-enabled host is pending.
 ** Added static file viewer tests for extension classification, root-directory containment and literal text escaping.
 ** Avoiding the user name "test" in automated tests. Using "test.auto" instead.
