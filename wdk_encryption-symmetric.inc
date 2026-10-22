@@ -40,8 +40,7 @@
 
 	function IsMcryptSupported()
 	{
-		// Historical API name: callers use this to check symmetric encryption support.
-		return class_exists("\phpseclib\Crypt\Rijndael");
+		return function_exists("mcrypt_module_open");
 	}
 
 	function MakeInitVector($strAlgorithm = "rijndael-256")
@@ -58,7 +57,7 @@
 				return false;
 			}
 		}
-		if (!function_exists("mcrypt_module_open"))
+		if (!IsMcryptSupported())
 		{
 			return false;
 		}
@@ -90,7 +89,7 @@
 			return $cipher->encrypt($strData);
 		}
 		// Retain support for other historical algorithms when mcrypt is installed.
-		if (!function_exists("mcrypt_module_open"))
+		if (!IsMcryptSupported())
 		{
 			return false;
 		}
@@ -129,7 +128,7 @@
 			// Keep legacy trimming and marker removal, even for leading NULs.
 			return StringSection(trim($data,"\0"),0,-1);
 		}
-		if (!function_exists("mcrypt_module_open"))
+		if (!IsMcryptSupported())
 		{
 			return false;
 		}
