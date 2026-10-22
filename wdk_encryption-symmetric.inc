@@ -1,15 +1,64 @@
 <?php
 
 	require_once("wdk_hash.inc");
+	require_once(__DIR__."/phpseclib/Crypt/Base.php");
+	require_once(__DIR__."/phpseclib/Crypt/Rijndael.php");
+
+	function GetSymmetricBlockSize($strAlgorithm)
+	{
+		switch ($strAlgorithm)
+		{
+			case "rijndael-128": return 16;
+			case "rijndael-192": return 24;
+			case "rijndael-256": return 32;
+		}
+		return false;
+	}
+
+	function MakeSymmetricCipher($strPassword,$initvector,$strAlgorithm,$strHashMethod)
+	{
+		$nBlockSize = GetSymmetricBlockSize($strAlgorithm);
+		if (($nBlockSize === false) || (strlen($initvector) != $nBlockSize))
+		{
+			return false;
+		}
+		if ($strHashMethod != "sha1")
+		{
+			$strPassword = MakeHash($strPassword,$initvector,$strHashMethod);
+		}
+		// Preserve the original StringSection call, including its UTF-8 semantics.
+		$key = StringSection(sha1($strPassword,TRUE), 0, 32);
+		$cipher = new \phpseclib\Crypt\Rijndael(\phpseclib\Crypt\Base::MODE_CBC);
+		$cipher->setPreferredEngine(\phpseclib\Crypt\Base::ENGINE_INTERNAL);
+		$cipher->setBlockLength($nBlockSize * 8);
+		// mcrypt_generic_init rounds a 20-byte SHA-1 key up to 24 bytes.
+		$cipher->setKey(str_pad($key,24,"\0"));
+		$cipher->setIV($initvector);
+		$cipher->disablePadding();
+		return $cipher;
+	}
 
 	function IsMcryptSupported()
 	{
-		return function_exists("mcrypt_module_open");
+		// Historical API name: callers use this to check symmetric encryption support.
+		return class_exists("\phpseclib\Crypt\Rijndael");
 	}
 
 	function MakeInitVector($strAlgorithm = "rijndael-256")
 	{
-		if (!IsMcryptSupported())
+		$nBlockSize = GetSymmetricBlockSize($strAlgorithm);
+		if ($nBlockSize !== false)
+		{
+			try
+			{
+				return random_bytes($nBlockSize);
+			}
+			catch (\Exception $exception)
+			{
+				return false;
+			}
+		}
+		if (!function_exists("mcrypt_module_open"))
 		{
 			return false;
 		}
@@ -27,7 +76,21 @@
 
 	function Encrypt($strData,$strPassword,$initvector,$strAlgorithm = "rijndael-256", $strHashMethod="sha1")
 	{
-		if (!IsMcryptSupported())
+		$nBlockSize = GetSymmetricBlockSize($strAlgorithm);
+		if ($nBlockSize !== false)
+		{
+			$cipher = MakeSymmetricCipher($strPassword,$initvector,$strAlgorithm,$strHashMethod);
+			if ($cipher === false)
+			{
+				return false;
+			}
+			// mcrypt uses zero padding, without an extra block for aligned input.
+			$strData .= "X";
+			$strData .= str_repeat("\0",($nBlockSize - strlen($strData) % $nBlockSize) % $nBlockSize);
+			return $cipher->encrypt($strData);
+		}
+		// Retain support for other historical algorithms when mcrypt is installed.
+		if (!function_exists("mcrypt_module_open"))
 		{
 			return false;
 		}
@@ -52,7 +115,21 @@
 
 	function Decrypt($strEncrypted,$strPassword,$initvector,$strAlgorithm = "rijndael-256", $strHashMethod="sha1")
 	{
-		if (!IsMcryptSupported())
+		$nBlockSize = GetSymmetricBlockSize($strAlgorithm);
+		if ($nBlockSize !== false)
+		{
+			$cipher = MakeSymmetricCipher($strPassword,$initvector,$strAlgorithm,$strHashMethod);
+			if (($cipher === false) || ($strEncrypted === ""))
+			{
+				return false;
+			}
+			// Match mcrypt's zero extension of incomplete ciphertext blocks.
+			$strEncrypted .= str_repeat("\0",($nBlockSize - strlen($strEncrypted) % $nBlockSize) % $nBlockSize);
+			$data = $cipher->decrypt($strEncrypted);
+			// Keep legacy trimming and marker removal, even for leading NULs.
+			return StringSection(trim($data,"\0"),0,-1);
+		}
+		if (!function_exists("mcrypt_module_open"))
 		{
 			return false;
 		}

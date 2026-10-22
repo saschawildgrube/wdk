@@ -2,8 +2,9 @@
 ==Version 0.0.80 WORK IN PROGRESS==
 NOT YET Baselined
 * '''IMPORTANT'''
-** No issues
+** Deploy the bundled phpseclib directory under /wdk together with wdk_encryption-symmetric.inc. Rijndael encryption no longer requires mcrypt; other historical algorithms still require the extension.
 * Security
+** MakeInitVector() now uses random_bytes() for Rijndael initialization vectors.
 ** Static file viewing and downloading now resolve file paths within the configured root directory, rejecting files outside that directory.
 * Defects
 ** Fixed calls to non-existent functions in wdk_website.inc.
@@ -19,6 +20,8 @@ NOT YET Baselined
 ** The system/server status command now returns the PHP version. 
 ** Added check.sh shell script to perform a series of read-only analysis checks on a server.
 * Improvements
+** Updated symmetric Rijndael-128, Rijndael-192 and Rijndael-256 encryption for PHP 7.4.33 using the bundled phpseclib 2.0.55 implementation. Legacy key derivation, CBC mode, zero padding and payload handling are retained for binary compatibility in both directions with the mcrypt implementation.
+** IsMcryptSupported() retains its historical name and now reports availability of the bundled symmetric encryption implementation.
 ** The static file viewer uses a single frame with horizontal and vertical scrolling confined to the file pane. CSS-only sizing follows the viewport without changing the surrounding page or navigation layout.
 ** CWikiPadModule Module now supports the re-direct logic to prevent mobile browsers to offer form resubmission.
 ** ParseVersion() now defaults to 3 version components - and hence assumes semantic versions by default.
@@ -30,6 +33,7 @@ NOT YET Baselined
 * Discontinued
 ** No changes
 * Quality
+** Added symmetric encryption round-trip, initialization-vector validation, block-boundary and NUL-byte tests. When mcrypt is installed, tests also check byte-for-byte ciphertext equality and decryption in both directions. Runtime verification on PHP 7.4.33 and an mcrypt-enabled host is pending.
 ** Added static file viewer tests for extension classification, root-directory containment and literal text escaping.
 ** Avoiding the user name "test" in automated tests. Using "test.auto" instead.
 ** Added automated Wiki element coverage for syntax highlighting, literal Wiki markup and HTML escaping.
