@@ -137,7 +137,8 @@
 				"?TID_SERVERMANAGER_LABEL_PLESK_STATUS?",
 				"?TID_SERVERMANAGER_LABEL_PLESK_VERSION?",
 				"?TID_SERVERMANAGER_LABEL_OS_NAME?",
-				"?TID_SERVERMANAGER_LABEL_OS_VERSION?");
+				"?TID_SERVERMANAGER_LABEL_OS_VERSION?",
+				"?TID_SERVERMANAGER_LABEL_PHP_VERSION?");
 			
 			$this->IncludeElement("format");
 			$formatError = new CFormatElement($this->GetWebsite(),"testfailed");
@@ -158,6 +159,7 @@
 				$strPleskVersion = "";
 				$strOSName = "";
 				$strOSVersion = "";
+				$strPHPVersion = "";
 				if ($strName != "")
 				{
 					$arrayWebservice = ArrayGetValue($arrayServer,"webservice");
@@ -221,6 +223,7 @@
 							$strPleskVersion = $consumer->GetResultValue("PLESK_VERSION");
 							$strOSName = $consumer->GetResultValue("OS_NAME");
 							$strOSVersion = $consumer->GetResultValue("OS_VERSION");
+							$strPHPVersion = $consumer->GetResultValue("PHP_VERSION");
 						}
 						$strPleskLinkLabel = "?TID_ITEM_INACTIVE?";
 						if ($bPleskActive == true)
@@ -243,7 +246,8 @@
 					$strPleskStatus,
 					$strPleskVersion,
 					$strOSName,
-					$strOSVersion);
+					$strOSVersion,
+					$strPHPVersion);
 				$arrayPleskVersions[] = $strPleskVersion;
 				if ($strPleskVersion != "" &&
 					($strHighestPleskVersion == "" || CompareVersion($strPleskVersion,$strHighestPleskVersion,4) > 0))
