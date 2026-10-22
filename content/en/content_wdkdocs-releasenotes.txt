@@ -15,7 +15,7 @@ NOT YET Baselined
 ** Added GetPleskVersion(). The system/server status command now returns the installed Plesk version and CServerManagerModule displays it.
 ** Added GetVersionInfoOS(). The system/server status command and CServerManagerModule now expose the operating system name and version.
 ** CServerManagerModule now displays and compares Plesk versions and highlights servers below the highest detected version.
-** The system/server status command now returns the PHP version.
+** The system/server status command now returns the PHP version. CServerManagerModule displays it in the rightmost column and highlights PHP versions below the highest detected version.
 ** Added check.sh shell script to perform a series of read-only analysis checks on a server.
 * Improvements
 ** The static file viewer uses a single frame with horizontal and vertical scrolling confined to the file pane. CSS-only sizing follows the viewport without changing the surrounding page or navigation layout.
