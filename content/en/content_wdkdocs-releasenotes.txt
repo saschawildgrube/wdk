@@ -31,6 +31,7 @@ NOT YET Baselined
 ** Removed not needed calls to deprecated imagedestroy().
 ** Rendering JavaScript code into the page only in later rendering iterations to improve performance.
 ** The Wiki demonstration in the Element Gallery now covers preformatted text, code, syntax highlighting and tables.
+** The .htaccess contained in website scaffolds now contains the directive "CGIPassAuth On" to ensure that Apache forwards authentication headers to the PHP handler.
 * Discontinued
 ** No changes
 * Quality
