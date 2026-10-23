@@ -2,7 +2,7 @@
 ==Version 0.0.80 WORK IN PROGRESS==
 NOT YET Baselined
 * '''IMPORTANT'''
-** Deploy the bundled phpseclib directory under /wdk together with wdk_encryption-symmetric.inc. Rijndael encryption no longer requires mcrypt; other historical algorithms still require the extension.
+** Minimum required PHP Version is now 7.4.33 (due to the php2shell vulnerability)
 * Security
 ** Updated symmetric Rijndael-128, Rijndael-192 and Rijndael-256 encryption for PHP 7.4.33 using the bundled phpseclib 2.0.55 implementation. Legacy key derivation, CBC mode, zero padding and payload handling are retained for binary compatibility in both directions with the mcrypt implementation.
 ** IsMcryptSupported() checks for the mcrypt extension and is used by the legacy mcrypt code paths and the bidirectional compatibility test. Removed mcrypt availability guards from encryption callers and regular tests because phpseclib is a bundled dependency.
