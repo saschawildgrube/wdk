@@ -37,6 +37,8 @@
 			$this->Trace("Searching log for \"PHP \" to check if there are any PHP notices, warnings, or errors.");
 			$this->Trace("");
  			
+			// said into stderr: "PHP message:
+
 			$nPos = FindString($strLog,"PHP ");
 			if ($nPos != -1)
 			{
