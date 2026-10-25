@@ -38,23 +38,28 @@ ps -eo pid,ppid,user,stat,pcpu,pmem,etime,comm --sort=-pcpu | head -25
 echo ""
 echo ""
 
-echo "Plesk Version:"
+echo "plesk version:"
 plesk version
 echo ""
 echo ""
 
+echo "apache version:"
+apache2 -v
+echo ""
+echo ""
 
-echo "apache2 config test:"
+
+echo "apache config test:"
 apache2ctl configtest
 echo ""
 echo ""
 
-echo "apache2 run config:"
+echo "apache run config:"
 apache2ctl -t -D DUMP_RUN_CFG
 echo ""
 echo ""
 
-echo "apache2 loaded modules:"
+echo "apache loaded modules:"
 apachectl -M
 echo ""
 echo ""
@@ -86,6 +91,10 @@ systemctl list-units --type=service --all | grep -E 'php.*fpm'
 echo ""
 echo ""
 
+echo "mariadb version:"
+mariadb --version
+echo ""
+echo ""
 
 echo "traffic:"
 ./traffic.sh

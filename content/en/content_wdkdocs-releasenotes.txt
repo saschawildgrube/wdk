@@ -10,7 +10,8 @@ NOT YET Baselined
 * New features
 ** No changes
 * Improvements
-** No changes
+** shell.sh now displays apache version.
+** shell.sh now displays mariadb version.
 * Discontinued
 ** No changes
 * Quality
