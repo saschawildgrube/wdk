@@ -38,6 +38,12 @@ ps -eo pid,ppid,user,stat,pcpu,pmem,etime,comm --sort=-pcpu | head -25
 echo ""
 echo ""
 
+echo "Plesk Version:"
+plesk version
+echo ""
+echo ""
+
+
 echo "apache2 config test:"
 apache2ctl configtest
 echo ""
