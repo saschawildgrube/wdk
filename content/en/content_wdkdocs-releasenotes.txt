@@ -8,7 +8,7 @@ NOT YET Baselined
 * Defects
 ** No changes
 * New features
-** No changes
+** Added shell script config-plesk-php-fpm.sh to configure webspaces that use PHP FPM with reasonable default settings.
 * Improvements
 ** shell.sh now displays apache version.
 ** shell.sh now displays mariadb version.
