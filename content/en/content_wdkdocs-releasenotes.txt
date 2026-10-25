@@ -40,6 +40,7 @@ NOT YET Baselined
 ** Added static file viewer tests for extension classification, root-directory containment and literal text escaping.
 ** Avoiding the user name "test" in automated tests. Using "test.auto" instead.
 ** Added automated Wiki element coverage for syntax highlighting, literal Wiki markup and HTML escaping.
+** The test environment/errorlog now displays the complete error log.
 * Refactoring
 ** No changes
 * Documentation
