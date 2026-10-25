@@ -1,6 +1,6 @@
 ={WDK} Release Notes= 
-==Version 0.0.80 WORK IN PROGRESS==
-NOT YET Baselined
+==Version 0.0.80==
+Baselined 2026-10-25
 * '''IMPORTANT'''
 ** Minimum required PHP Version is now 7.4.33 (due to the php2shell vulnerability)
 * Security
