@@ -12,6 +12,7 @@ NOT YET Baselined
 * Improvements
 ** shell.sh now displays apache version.
 ** shell.sh now displays mariadb version.
+** Refactored array functions for PHP 8.x compatibility.
 * Discontinued
 ** No changes
 * Quality
