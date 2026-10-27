@@ -50,7 +50,7 @@ command -v plesk >/dev/null || {
 }
 
 # Keep configuration in memory; {DOCROOT} remains literal for Plesk.
-config='error_log = {DOCROOT}/../../logs/error.log
+config='error_log = {DOCROOT}/../../{LOGDIR}/error.log
 
 [php-fpm-pool-settings]
 pm = dynamic
@@ -129,7 +129,16 @@ printf '\nTargets: %s\n' "${#targets[@]}"
 if [[ $mode == preview ]]; then
     echo 'Preview only. No settings or services were changed.'
     echo 'Use --all or specify webspace name(s) to apply these settings.'
-    printf '%s\n' "$config"
+    for domain in "${targets[@]}"; do
+        log_dir=log
+
+        case ${domain,,} in
+            dev.*) log_dir=log-dev ;;
+            test.*) log_dir=log-test ;;
+        esac
+
+        printf '\nCONFIG %s\n%s\n' "$domain" "${config//\{LOGDIR\}/$log_dir}"
+    done
     exit 0
 fi
 
@@ -178,6 +187,17 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
         )
 
 
+def config_for_domain(domain):
+    log_dir = "log"
+
+    if domain.lower().startswith("dev."):
+        log_dir = "log-dev"
+    elif domain.lower().startswith("test."):
+        log_dir = "log-test"
+
+    return config.replace("{LOGDIR}", log_dir)
+
+
 def packet(domain, operation):
     root = ET.Element("packet")
     node = ET.SubElement(ET.SubElement(root, "site"), operation)
@@ -189,7 +209,7 @@ def packet(domain, operation):
         host = ET.SubElement(ET.SubElement(node, "values"), "hosting")
         prop = ET.SubElement(ET.SubElement(host, "vrt_hst"), "property")
         ET.SubElement(prop, "name").text = "additional-directives"
-        ET.SubElement(prop, "value").text = config
+        ET.SubElement(prop, "value").text = config_for_domain(domain)
 
     return ET.tostring(root, encoding="utf-8")
 
@@ -282,8 +302,6 @@ def directive_values(text):
     return values
 
 
-expected_values = directive_values(config)
-
 try:
     port = int(os.environ.get("PLESK_PANEL_PORT", "8443"))
 
@@ -355,6 +373,7 @@ try:
     )
 
     for domain in domains:
+        expected_values = directive_values(config_for_domain(domain))
         current = domain
         write_attempted = True
         print("Applying: " + domain, flush=True)
