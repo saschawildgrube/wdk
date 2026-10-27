@@ -38,33 +38,39 @@ ps -eo pid,ppid,user,stat,pcpu,pmem,etime,comm --sort=-pcpu | head -25
 echo ""
 echo ""
 
-echo "### plesk version:"
+echo "### OS Version"
+cat /etc/os-release
+echo ""
+echo ""
+
+
+echo "### Plesk Version:"
 plesk version
 echo ""
 echo ""
 
-echo "### apache version:"
+echo "### Apache  cat /etc/os-releaseersion:"
 apache2 -v
 echo ""
 echo ""
 
 
-echo "### apache config test:"
+echo "### Apache Config Test:"
 apache2ctl configtest
 echo ""
 echo ""
 
-echo "### apache run config:"
+echo "### Apache Run Config:"
 apache2ctl -t -D DUMP_RUN_CFG
 echo ""
 echo ""
 
-echo "### apache loaded modules:"
+echo "### Apache Loaded Modules:"
 apachectl -M
 echo ""
 echo ""
 
-echo "### apache2 processes:"
+echo "### Apache Processes:"
 pid=$(ps -eo pid,comm,stat | awk '$2=="apache2" && $3 ~ /^R/ {print $1; exit}')
 if [ -n "$pid" ]; then
   echo "Tracing Apache PID $pid"
@@ -75,34 +81,34 @@ fi
 echo ""
 echo ""
 
-echo "### nginx config test:"
+echo "### nginx Config Test:"
 nginx -t
 echo ""
 echo ""
 
 
-echo "### php-fpm processes:"
+echo "### php-fpm Processes:"
 ps -eo pid,ppid,etime,args | grep '[p]hp-fpm'
 echo ""
 echo ""
 
-echo "### php-fpm services:"
+echo "### php-fpm Services:"
 systemctl list-units --type=service --all | grep -E 'php.*fpm'
 echo ""
 echo ""
 
-echo "### mariadb version:"
+echo "### MariaDB Version:"
 mariadb --version
 echo ""
 echo ""
 
-echo "### traffic:"
+echo "### Traffic:"
 ./traffic.sh
 echo ""
 echo ""
 
 
-echo "### php-fpm slow log:"
+echo "### php-fpm Slow Log:"
 tail -n 100 /var/log/php-fpm-slow.log
 echo ""
 echo ""
