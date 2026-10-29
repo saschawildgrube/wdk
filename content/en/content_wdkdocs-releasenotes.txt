@@ -13,7 +13,8 @@ NOT YET Baselined
 ** check.sh now display OS Version.
 ** check.sh now displays Apache version.
 ** check.sh now displays MariaDB version.
-** Refactored array functions for PHP 8.x compatibility.
+** Modified array functions for PHP 8.x compatibility.
+** Avoided creation of dynamic properties for 8.x compatibility. 
 * Discontinued
 ** No changes
 * Quality
