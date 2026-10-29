@@ -17,6 +17,7 @@ NOT YET Baselined
 ** Avoided creation of dynamic properties for 8.x compatibility. 
 ** Modified StringCheckCharSet() for PHP 8.x compatibility.
 ** Modified GetIntegerValue() for PHP 8.x compatibility.
+** Modified ParseHttpResponse() for PHP 8.x compatibility.
 * Discontinued
 ** No changes
 * Quality
