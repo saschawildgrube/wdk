@@ -188,12 +188,12 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
 
 
 def config_for_domain(domain):
-    log_dir = "log"
+    log_dir = "logs"
 
     if domain.lower().startswith("dev."):
-        log_dir = "log-dev"
+        log_dir = "logs-dev"
     elif domain.lower().startswith("test."):
-        log_dir = "log-test"
+        log_dir = "logs-test"
 
     return config.replace("{LOGDIR}", log_dir)
 
