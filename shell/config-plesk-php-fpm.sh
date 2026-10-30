@@ -130,11 +130,11 @@ if [[ $mode == preview ]]; then
     echo 'Preview only. No settings or services were changed.'
     echo 'Use --all or specify webspace name(s) to apply these settings.'
     for domain in "${targets[@]}"; do
-        log_dir=log
+        log_dir=logs
 
         case ${domain,,} in
-            dev.*) log_dir=log-dev ;;
-            test.*) log_dir=log-test ;;
+            dev.*) log_dir=logs-dev ;;
+            test.*) log_dir=logs-test ;;
         esac
 
         printf '\nCONFIG %s\n%s\n' "$domain" "${config//\{LOGDIR\}/$log_dir}"
