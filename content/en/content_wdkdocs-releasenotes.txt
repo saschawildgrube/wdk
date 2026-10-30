@@ -18,6 +18,7 @@ NOT YET Baselined
 ** Modified StringCheckCharSet() for PHP 8.x compatibility.
 ** Modified GetIntegerValue() for PHP 8.x compatibility.
 ** Modified ParseHttpResponse() for PHP 8.x compatibility.
+** Modified CSV rendering in CWebservice for PHP 8.x compatibility.
 * Discontinued
 ** No changes
 * Quality
