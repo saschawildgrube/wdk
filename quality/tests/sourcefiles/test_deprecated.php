@@ -143,6 +143,7 @@
 						'/CDisclaimerModule/',
 						'/disclaimerconfirmed/',
 						'/strftime/',
+						'/strptime/',
 						'/\%Y/',
 						'/\%H/',
 						'/\%h/',						

@@ -26,6 +26,7 @@ NOT YET Baselined
 ** Detecting the use of utf8_encode() in test sourcefile/deprecated.
 * Refactoring
 ** Avoid the use of utf8_encode() for 8.x compatibility.
+** Avoid the use of strptime() for 8.x compatibility.
 * Documentation
 ** No changes
 ==Version 0.0.80==
