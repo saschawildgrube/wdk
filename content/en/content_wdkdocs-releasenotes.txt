@@ -28,6 +28,7 @@ NOT YET Baselined
 * Refactoring
 ** Avoid the use of utf8_encode() and utf8_decode() for 8.x compatibility.
 ** Avoid the use of strptime() for 8.x compatibility.
+** Updated Encrypt() and Decrypt() function for 8.x compatibility while maintaining cryptographic backward compatibility.  
 * Documentation
 ** No changes
 ==Version 0.0.80==
