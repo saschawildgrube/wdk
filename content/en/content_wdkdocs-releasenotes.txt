@@ -23,7 +23,7 @@ NOT YET Baselined
 * Discontinued
 ** No changes
 * Quality
-** No changes
+** Detecting the use of utf8_encode() in test sourcefile/deprecated.
 * Refactoring
 ** Avoid the use of utf8_encode() for 8.x compatibility.
 * Documentation
