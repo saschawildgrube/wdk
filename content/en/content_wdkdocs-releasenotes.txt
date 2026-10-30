@@ -23,7 +23,7 @@ NOT YET Baselined
 * Quality
 ** No changes
 * Refactoring
-** No changes
+** Avoid the use of utf8_encode() for 8.x compatibility.
 * Documentation
 ** No changes
 ==Version 0.0.80==
