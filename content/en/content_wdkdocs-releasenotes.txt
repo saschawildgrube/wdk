@@ -20,6 +20,7 @@ NOT YET Baselined
 ** Modified GetIntegerValue() for PHP 8.x compatibility.
 ** Modified ParseHttpResponse() for PHP 8.x compatibility.
 ** Modified CSV rendering in CWebservice for PHP 8.x compatibility.
+** Added exception handling around mysqli_connect() for PHP 8.x compatibility.
 * Discontinued
 ** No changes
 * Quality
