@@ -11,7 +11,7 @@ NOT YET Baselined
 ** Added shell script config-plesk-php-fpm.sh to configure webspaces that use PHP FPM with reasonable default settings.
 * Improvements
 ** Updated version requirements in CMonitoringUnitTest::TestCase_Server().
-** check.sh now display OS Version.
+** check.sh now displays OS Version.
 ** check.sh now displays Apache version.
 ** check.sh now displays MariaDB version.
 ** Modified array functions for PHP 8.x compatibility.
