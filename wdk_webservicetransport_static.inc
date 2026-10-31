@@ -50,8 +50,18 @@
 		{
 			return false;
 		}
-		$strRoot = realpath(GetWebservicesDir());
-		$strEntry = realpath(GetWebservicesDir().'/'.$strService.'/index.php');
+		// Reject relative configuration rather than resolving it against the caller's directory.
+		$strConfiguredRoot = str_replace('\\','/',GetWebservicesDir());
+		if (substr($strConfiguredRoot,0,1) != '/' && !preg_match('~^[A-Za-z]:/~',$strConfiguredRoot))
+		{
+			return false;
+		}
+		$strRoot = realpath($strConfiguredRoot);
+		if ($strRoot === false)
+		{
+			return false;
+		}
+		$strEntry = realpath($strRoot.'/'.$strService.'/index.php');
 		if ($strRoot === false || $strEntry === false || !is_file($strEntry))
 		{
 			return false;
@@ -72,7 +82,32 @@
 
 	function IncludeStaticWebserviceEntryPoint($strEntryPoint)
 	{
-		// Keep entry-point variables separate from dispatcher bookkeeping.
+		// The caller's directory is only a restoration target, never a lookup base.
+		$strCallerDir = getcwd();
+		if ($strCallerDir === false)
+		{
+			throw new RuntimeException('Cannot save the calling directory for a static webservice.');
+		}
+		try
+		{
+			if (!chdir(dirname($strEntryPoint)))
+			{
+				throw new RuntimeException('Cannot enter the static webservice directory.');
+			}
+			ExecuteStaticWebserviceEntryPoint($strEntryPoint);
+		}
+		finally
+		{
+			if (!chdir($strCallerDir))
+			{
+				throw new RuntimeException('Cannot restore the calling directory after a static webservice.');
+			}
+		}
+	}
+
+	function ExecuteStaticWebserviceEntryPoint($strEntryPoint)
+	{
+		// Entry-point variables must not overwrite the saved caller directory.
 		include($strEntryPoint);
 	}
 
@@ -91,7 +126,6 @@
 				$arraySavedGlobals[$strKey] = $GLOBALS[$strKey];
 			}
 		}
-		$strWorkingDir = getcwd();
 		$strIncludePath = get_include_path();
 		$strTimeZone = date_default_timezone_get();
 		$nErrorReporting = error_reporting();
@@ -143,11 +177,8 @@
 			$_SERVER['REQUEST_TIME_FLOAT'] = microtime(true);
 			$_SERVER['CONTENT_TYPE'] = 'application/x-www-form-urlencoded';
 			$_SERVER['CONTENT_LENGTH'] = strlen(is_array($arrayParams) ? MakeURLParameters($arrayParams) : GetStringValue($arrayParams));
-			if (!chdir(dirname($strEntryPoint)))
-			{
-				return false;
-			}
-			set_include_path(__DIR__.PATH_SEPARATOR.$strWorkingDir.PATH_SEPARATOR.$strIncludePath);
+			// Resolve bare includes against explicit service and framework directories.
+			set_include_path(dirname($strEntryPoint).PATH_SEPARATOR.__DIR__.PATH_SEPARATOR.GetSourceDir());
 			ob_start();
 			IncludeStaticWebserviceEntryPoint($strEntryPoint);
 			while (ob_get_level() > $nBufferLevel + 1)
@@ -158,6 +189,7 @@
 		}
 		catch (Throwable $error)
 		{
+			error_log('Static webservice execution failed: '.get_class($error).' in '.$error->getFile().':'.$error->getLine());
 			return false;
 		}
 		finally
@@ -177,7 +209,6 @@
 					unset($GLOBALS[$strKey]);
 				}
 			}
-			chdir($strWorkingDir);
 			set_include_path($strIncludePath);
 			date_default_timezone_set($strTimeZone);
 			foreach ($arrayIni as $strKey => $strValue)

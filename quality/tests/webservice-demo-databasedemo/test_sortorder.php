@@ -7,7 +7,6 @@
 	{
 		
 		private $m_strWebservice;
-		private $m_strItemID;
 		private $m_consumer;
 		
 		function __construct()
