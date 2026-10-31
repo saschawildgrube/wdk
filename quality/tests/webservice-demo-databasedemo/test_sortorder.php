@@ -7,8 +7,8 @@
 	{
 		
 		private $m_strWebservice;
-		private $m_consumer;
 		private $m_strItemID;
+		private $m_consumer;
 		
 		function __construct()
 		{
@@ -22,7 +22,6 @@
 		{
 			$this->RequireWebservice($this->m_strWebservice);
 			$this->SetVerbose(true);
-			$this->m_consumer = new CWebServiceConsumerWebApplication($this);
 			return parent::OnInit();	
 		}	
 		
@@ -30,9 +29,13 @@
 		{
 			parent::OnTest();
 			
+			$this->m_consumer = new CWebServiceConsumerWebApplication($this);
+
 			$this->OnCleanup();
 			$arrayItemIDs = array();
+
 			
+
 		
 			/*
 
