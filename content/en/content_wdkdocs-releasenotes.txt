@@ -6,7 +6,7 @@ NOT YET Baselined
 * Security
 ** No changes
 * Defects
-** No changes
+** Shell script config-plesk-php-fpm.sh did not consider the actual FPM engine version(s) when restarting. This has been fixed. 
 * New features
 ** No changes
 * Improvements
