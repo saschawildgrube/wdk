@@ -2,7 +2,8 @@
 ==Version 0.0.82 WORK IN PROGRESS==
 NOT YET Baselined
 * '''IMPORTANT'''
-** No issues
+** PHP 7 is no longer actively supported.
+** PHP 8.3.36 (and higher patch versions) is supported.
 * Security
 ** No changes
 * Defects
@@ -22,7 +23,7 @@ NOT YET Baselined
 ==Version 0.0.81==
 Baselined 2026-10-30
 * '''IMPORTANT'''
-** Now supporting PHP 7.4.33 and 8.3.36
+** Now supporting PHP 7.4.33 and 8.3.36 (and higher)
 * Security
 ** Updated Encrypt() and Decrypt() functions for 8.x compatibility while maintaining cryptographic backward compatibility.  
 * Defects
