@@ -10,7 +10,7 @@ NOT YET Baselined
 * New features
 ** No changes
 * Improvements
-** No changes
+** Avoid to pass null to htmlentities() for 8.x compatibility.
 * Discontinued
 ** No changes
 * Quality
