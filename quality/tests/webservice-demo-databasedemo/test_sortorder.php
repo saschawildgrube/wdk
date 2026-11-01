@@ -28,13 +28,6 @@
 		{
 			parent::OnTest();
 			
-			$this->m_consumer = new CWebServiceConsumerWebApplication($this);
-
-			$this->OnCleanup();
-			$arrayItemIDs = array();
-
-			
-
 		
 			/*
 
@@ -75,6 +68,9 @@
 			25. List and check 
 			
 			*/
+
+			$this->m_consumer = new CWebServiceConsumerWebApplication($this);
+			$arrayItemIDs = array();
 
 			
 			$this->Trace("1. Add without sort order (at end)");
@@ -444,6 +440,12 @@
 		function OnCleanup()
 		{
 			parent::OnCleanup();
+			// Inactive tests never enter OnTest(), but their destructor still runs cleanup.
+			if ($this->m_consumer === null)
+			{
+				$this->Trace("Cleanup skipped: webservice consumer was not initialized.");
+				return true;
+			}
 			
 			
 			

@@ -80,44 +80,98 @@
 		return $strEntry;
 	}
 
-	function IncludeStaticWebserviceEntryPoint($strEntryPoint)
+	function IncludeStaticWebserviceEntryPoint($strEntryPoint,&$strFailure = "",$strCallerScript = "")
 	{
-		// The caller's directory is only a restoration target, never a lookup base.
+		$strFailure = '';
+		// Shutdown destructors may start outside the site's permitted directories.
+		// Verify the return directory before executing a service with side effects.
 		$strCallerDir = getcwd();
-		if ($strCallerDir === false)
-		{
-			throw new RuntimeException('Cannot save the calling directory for a static webservice.');
-		}
 		try
 		{
-			if (!chdir(dirname($strEntryPoint)))
+			if ($strCallerDir === false || !@chdir($strCallerDir)) 
 			{
-				throw new RuntimeException('Cannot enter the static webservice directory.');
+				$strScriptPath = str_replace('\\','/',$strCallerScript);
+				if ($strScriptPath == '' || (substr($strScriptPath,0,1) != '/'
+					&& !preg_match('~^[A-Za-z]:/~',$strScriptPath)))
+				{
+					$strFailure = 'CALLER_DIRECTORY_UNAVAILABLE';
+					return false;
+				}
+				$strFallbackDir = realpath(dirname($strScriptPath));
+				if ($strFallbackDir === false || !@chdir($strFallbackDir))
+				{
+					$strFailure = 'CALLER_SCRIPT_DIRECTORY_UNAVAILABLE';
+					return false;
+				}
+				error_log('Static webservice: inaccessible caller directory '.var_export($strCallerDir,true)
+					.'; using calling script directory '.$strFallbackDir);
+				$strCallerDir = $strFallbackDir;
 			}
-			ExecuteStaticWebserviceEntryPoint($strEntryPoint);
+		}
+		catch (Throwable $error)
+		{
+			$strFailure = 'PREPARE_CALLER_DIRECTORY: '.get_class($error).' in '.$error->getFile().':'.$error->getLine();
+			return false;
+		}
+		$bResult = false;
+		$strStage = 'ENTER_SERVICE_DIRECTORY';
+		try
+		{
+			if (@chdir(dirname($strEntryPoint)))
+			{
+				$strStage = 'EXECUTE_ENTRY_POINT';
+				$bResult = ExecuteStaticWebserviceEntryPoint($strEntryPoint);
+				if (!$bResult)
+				{
+					$strFailure = 'ENTRY_POINT_RETURNED_FALSE';
+				}
+			}
+			else
+			{
+				$strFailure = 'SERVICE_DIRECTORY_UNAVAILABLE';
+			}
+		}
+		catch (Throwable $error)
+		{
+			$strFailure = $strStage.': '.get_class($error).' in '.$error->getFile().':'.$error->getLine();
+			$bResult = false;
 		}
 		finally
 		{
-			if (!chdir($strCallerDir))
+			try
 			{
-				throw new RuntimeException('Cannot restore the calling directory after a static webservice.');
+				if (!@chdir($strCallerDir))
+				{
+					$strFailure .= ' RESTORE_CALLER_DIRECTORY_FAILED';
+					$bResult = false;
+				}
+			}
+			catch (Throwable $error)
+			{
+				$strFailure .= ' RESTORE_CALLER_DIRECTORY: '.get_class($error).' in '.$error->getFile().':'.$error->getLine();
+				$bResult = false;
 			}
 		}
+		return $bResult;
 	}
 
 	function ExecuteStaticWebserviceEntryPoint($strEntryPoint)
 	{
 		// Entry-point variables must not overwrite the saved caller directory.
-		include($strEntryPoint);
+		return (@include($strEntryPoint)) !== false;
 	}
 
-	function StaticWebserviceRequest($strURL,$arrayParams)
+	function StaticWebserviceRequest($strURL,$arrayParams,&$strFailure = "")
 	{
+		$strFailure = '';
 		$strEntryPoint = GetStaticWebserviceEntryPoint($strURL);
 		if ($strEntryPoint === false || CWebServiceTransportContext::$nDepth >= 32)
 		{
+			$strFailure = ($strEntryPoint === false) ? 'LOCAL_ENTRY_POINT_UNAVAILABLE' : 'STATIC_CALL_DEPTH_EXCEEDED';
 			return false;
 		}
+		// Capture before installing the service's synthetic SERVER values.
+		$strCallerScript = isset($_SERVER['SCRIPT_FILENAME']) ? $_SERVER['SCRIPT_FILENAME'] : '';
 		$arraySavedGlobals = array();
 		foreach (array('_GET','_POST','_REQUEST','_COOKIE','_FILES','_SERVER') as $strKey)
 		{
@@ -180,16 +234,30 @@
 			// Resolve bare includes against explicit service and framework directories.
 			set_include_path(dirname($strEntryPoint).PATH_SEPARATOR.__DIR__.PATH_SEPARATOR.GetSourceDir());
 			ob_start();
-			IncludeStaticWebserviceEntryPoint($strEntryPoint);
+			if (!IncludeStaticWebserviceEntryPoint($strEntryPoint,$strFailure,$strCallerScript))
+			{
+				return false;
+			}
 			while (ob_get_level() > $nBufferLevel + 1)
 			{
 				ob_end_flush();
 			}
-			return ob_get_level() == $nBufferLevel + 1 ? ob_get_contents() : false;
+			if (ob_get_level() != $nBufferLevel + 1)
+			{
+				$strFailure = 'RESPONSE_BUFFER_MISSING';
+				return false;
+			}
+			$strOutput = ob_get_contents();
+			if ($strOutput === '')
+			{
+				$strFailure = 'EMPTY_SERVICE_RESPONSE';
+			}
+			return $strOutput;
 		}
 		catch (Throwable $error)
 		{
-			error_log('Static webservice execution failed: '.get_class($error).' in '.$error->getFile().':'.$error->getLine());
+			$strFailure = 'STATIC_REQUEST: '.get_class($error).' in '.$error->getFile().':'.$error->getLine();
+			error_log('Static webservice execution failed: '.$strFailure);
 			return false;
 		}
 		finally
