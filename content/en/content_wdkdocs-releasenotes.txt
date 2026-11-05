@@ -15,6 +15,7 @@ NOT YET Baselined
 ** Added function CDatabase::GetMatchedRows().
 * Improvements
 ** Avoid to pass null to htmlentities() and several other functions for 8.x compatibility.
+** Test environment/errorlog is now more strict and fails on any entry in the error log.
 * Discontinued
 ** No changes
 * Quality
