@@ -10,6 +10,7 @@ NOT YET Baselined
 ** Shell script config-plesk-php-fpm.sh did not consider the actual FPM engine version(s) when restarting. This has been fixed. 
 ** Webservice system/session eventually returned SESSION_NOT_FOUND if a session is written without changes. This has been fixed. 
 * New features
+** Added CStaticFileViewerElement (staticfileviewer) to display local text and source code files with escaped contents and preserved formatting.
 ** Web Services can now either be consumed via http (like before) or by static calls - while maintaining the existing implementation pattern - to increase speed and consider web applications that do not need a distributed web services architecture.
 ** Function GetWebservicesDefaultTransportMode() is introduced to env.inc: it should either return "http" or "static". 
 ** Added function CDatabase::GetMatchedRows().
@@ -18,11 +19,11 @@ NOT YET Baselined
 ** Test environment/errorlog is now more strict and fails on any entry in the error log.
 ** Improved StringEncodeUTF8() to always return a string.
 * Discontinued
-** No changes
+** Removed CStaticFileViewerModule (cms/staticfileviewer). Use CStaticFileViewerElement::RenderStaticFileViewer() with already loaded text instead.
 * Quality
 ** No changes
 * Refactoring
-** No changes
+** CStaticFileBrowserModule now loads and validates files, manages the file title and errors, and passes text to CStaticFileViewerElement for rendering.
 * Documentation
 ** No changes
 ==Version 0.0.81==

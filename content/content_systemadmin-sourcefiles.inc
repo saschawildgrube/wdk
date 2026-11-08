@@ -6,6 +6,7 @@
 		{
 			$this->GetWebsite()->IncludeModule("cms/staticfilebrowser");
 			$arrayConfig = array();
+			$arrayConfig["blockedfiles"] = $this->GetWebsite()->GetConfig("staticfilebrowser_blockedfiles");
 			$arrayConfig["rootdir"] = GetDocumentRootDir();
 			//$arrayConfig["hidesize"] = true;
 			//$arrayConfig["hidelastchange"] = true;
