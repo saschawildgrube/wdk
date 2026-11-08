@@ -521,7 +521,6 @@ $itemmanagerdata->SetSortOptions(
 			$strRelativePath = StringSection($strPath,StringLength($strRoot) + 1);
 			$arraySections = StringExplode($strRelativePath,"/");
 			$this->IncludeElement("staticfileviewer");
-			$this->IncludeElement("link");
 			$link = new CLinkElement($this->GetWebsite(),"default");
 			$arrayParams = array();
 			$arrayParams[$this->GetModuleVarNameState()] = "browse";
