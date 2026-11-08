@@ -500,6 +500,8 @@ $itemmanagerdata->SetSortOptions(
 
 		function StateBrowse()
 		{
+			$this->SetOutputItem("STATICFILEBROWSER_FOLDERPATH",$this->RenderFilePath(
+				realpath($this->GetCurrentDirAbsolute()),true));
 			switch ($this->GetStyle())
 			{
 			case "portfolio":
@@ -510,6 +512,49 @@ $itemmanagerdata->SetSortOptions(
 		}
 
 		
+		function RenderFilePath($strPath,$bDirectory = false)
+		{
+			$strRoot = ReplaceString(realpath($this->GetRootDir()),"\\","/");
+			$strRoot = StringRemoveTrailingCharacters($strRoot,"/",true);
+			$strPath = ReplaceString($strPath,"\\","/");
+			$strPath = StringRemoveTrailingCharacters($strPath,"/",true);
+			$strRelativePath = StringSection($strPath,StringLength($strRoot) + 1);
+			$arraySections = StringExplode($strRelativePath,"/");
+			$this->IncludeElement("staticfileviewer");
+			$this->IncludeElement("link");
+			$link = new CLinkElement($this->GetWebsite(),"default");
+			$arrayParams = array();
+			$arrayParams[$this->GetModuleVarNameState()] = "browse";
+			$arrayParams[$this->GetModuleVarName("file")] = "";
+			$arrayParams[$this->GetModuleVarName("currentdir")] = "";
+			$strOutput = "";
+			$strRelativeDir = "";
+			foreach ($arraySections as $nIndex => $strSection)
+			{
+				if ($strSection == "")
+				{
+					continue;
+				}
+				$strOutput .= "/";
+				$strLabel = CStaticFileViewerElement::EncodeText($strSection);
+				if ($bDirectory || $nIndex < count($arraySections) - 1)
+				{
+					$strRelativeDir .= $strSection."/";
+					$arrayParams[$this->GetModuleVarName("currentdir")] = $strRelativeDir;
+					$strOutput .= $link->RenderLink($this->GetWebsite()->MakeURL($arrayParams),$strLabel);
+				}
+				else
+				{
+					$strOutput .= $strLabel;
+				}
+			}
+			if ($bDirectory && $strOutput == "")
+			{
+				$strOutput = "/";
+			}
+			return $strOutput;
+		}
+
 		function StateView()
 		{
 			$strFile = $this->GetModuleVar("file");
@@ -527,6 +572,7 @@ $itemmanagerdata->SetSortOptions(
 			$this->IncludeElement("staticfileviewer");
 			$this->SetOutputItem("STATICFILEVIEWER_FILENAME",CStaticFileViewerElement::EncodeText(
 				GetFileNameFromPath(ReplaceString($strFile,"\\","/"))));
+			$this->SetOutputItem("STATICFILEVIEWER_FILEPATH",$this->RenderFilePath($strPath));
 			$viewer = new CStaticFileViewerElement($this->GetWebsite(),"default");
 			$this->SetOutputItem("STATICFILEVIEWER",$viewer->RenderStaticFileViewer($strText));
 			$arrayParams = array();
