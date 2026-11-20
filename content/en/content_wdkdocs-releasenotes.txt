@@ -19,6 +19,7 @@ NOT YET Baselined
 ** Avoid to pass null to htmlentities() and several other functions for 8.x compatibility.
 ** Test environment/errorlog is now more strict and fails on any entry in the error log.
 ** Improved StringEncodeUTF8() to always return a string.
+** check.sh now displays nginx version.
 * Discontinued
 ** Removed CStaticFileViewerModule (cms/staticfileviewer). Use CStaticFileViewerElement::RenderStaticFileViewer() with already loaded text instead.
 * Quality
@@ -39,7 +40,7 @@ Baselined 2026-10-30
 ** Added shell script config-plesk-php-fpm.sh to configure webspaces that use PHP FPM with reasonable default settings.
 * Improvements
 ** Updated version requirements in CMonitoringUnitTest::TestCase_Server().
-** check.sh now displays OS Version.
+** check.sh now displays OS version.
 ** check.sh now displays Apache version.
 ** check.sh now displays MariaDB version.
 ** Modified array functions for PHP 8.x compatibility.
