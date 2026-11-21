@@ -5716,10 +5716,8 @@
 		{
 			$this->ActivateJQuery();
 			
-			//$this->AddJavaScriptURL('react','https://unpkg.com/react@16/umd/react.development.js'); 
-			$this->AddJavaScript('react','react-16.14.0.development');
-			//$this->AddJavaScriptURL('react-dom','https://unpkg.com/react-dom@16/umd/react-dom.development.js'); 
-			$this->AddJavaScript('react-dom','react-dom-16.14.0.development');
+			$this->AddJavaScript('react','react-19.3.1.development');
+			$this->AddJavaScript('react-dom','react-dom-19.3.1.development');
 
 			$this->AddJavaScript('wdk');
 			$this->AddJavaScript('wdk-react');

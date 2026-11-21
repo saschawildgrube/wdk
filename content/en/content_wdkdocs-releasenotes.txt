@@ -15,6 +15,8 @@ NOT YET Baselined
 ** Function GetWebservicesDefaultTransportMode() is introduced to env.inc: it should either return "http" or "static". 
 ** Added function CDatabase::GetMatchedRows().
 * Improvements
+** Updated the bundled React and React DOM distributions from 16.14.0 to 19.3.1. CReactElement now uses reusable React roots through RenderReactElement(), preserving synchronous mounting for existing WDK initialization code.
+** CServerManagerModule now displays the page-load date and time below the server table using WDK date/time formatting and the website's locale and timezone.
 ** CStaticFileBrowserModule now displays paths relative to the configured root in file and folder views, with clickable folder sections for navigation. The configured root name and parent directories remain hidden, and the root folder is shown as "/". In the file view, the path appears above the filename title.
 ** Avoid to pass null to htmlentities() and several other functions for 8.x compatibility.
 ** Test environment/errorlog is now more strict and fails on any entry in the error log.
