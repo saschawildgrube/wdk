@@ -5671,9 +5671,6 @@
 
 		function ActivateJQuery()
 		{
-			//$this->AddJavaScriptURL('jquery','https://code.jquery.com/jquery-1.12.4.min.js','sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=');
-			//$this->AddJavaScriptURL('jquery','https://code.jquery.com/jquery-3.5.1.slim.min.js','sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj');
-			//$this->AddJavaScriptURL('jquery','https://code.jquery.com/jquery-3.5.1.min.js','sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==');
 			$this->AddJavaScript('jquery','jquery-3.5.1.min');
 
 		}		
