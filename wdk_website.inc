@@ -5719,13 +5719,6 @@
 			return true;
 		}		
 
-		function ActivateD3v5()
-		{
-			//$this->AddJavaScriptURL('d3v5','https://d3js.org/d3.v5.min.js'); 
-			$this->AddJavaScript('d3v5','d3-5.16.0.min'); 
-		
-			return true;
-		}		
 		
 
 		

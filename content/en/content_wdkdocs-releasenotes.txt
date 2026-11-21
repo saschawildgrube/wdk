@@ -25,6 +25,7 @@ NOT YET Baselined
 ** Improved StringEncodeUTF8() to always return a string.
 ** check.sh now displays nginx version.
 * Discontinued
+** D3 is no longer contained in WDK.
 ** Removed Facebook SDK support, including CWebsite::ActivateFacebookSDK() and js/facebook-sdk.js.
 ** Removed CStaticFileViewerModule (cms/staticfileviewer). Use CStaticFileViewerElement::RenderStaticFileViewer() with already loaded text instead.
 * Quality
