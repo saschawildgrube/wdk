@@ -5663,12 +5663,6 @@
 			return true;
 		}
 
-		function ActivateFacebookSDK()
-		{
-			$this->AddJavaScript('facebook-sdk');
-			$this->SetBodyItem('facebook-sdk','<div id="fb-root"></div>');
-		}		
-
 		function ActivateJQuery()
 		{
 			$this->AddJavaScript('jquery','jquery-3.5.1.min');
