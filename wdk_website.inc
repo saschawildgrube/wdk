@@ -5702,7 +5702,7 @@
 
 		function ActivateFontAwesome5()
 		{ 
-			$this->AddJavaScriptURL('fontawesome5','https://use.fontawesome.com/releases/v5.0.8/js/all.js','sha384-SlE991lGASHoBfWbelyBPLsUlwY1GwNDJo3jSJO04KZ33K2bwfV9YBauFfnzvynJ');	
+			$this->AddJavaScript('fontawesome5','fontawesome-5.15.4.min');
 		}
 
 
