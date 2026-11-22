@@ -17,6 +17,7 @@ NOT YET Baselined
 ** Function GetWebservicesDefaultTransportMode() is introduced to env.inc: it should either return "http" or "static". 
 ** Added function CDatabase::GetMatchedRows().
 * Improvements
+** Bundled Bootstrap 4.6.2, the final stable Bootstrap 4 release. ActivateBootstrap4() now loads the local CSS and JavaScript bundle (including Popper) instead of Bootstrap 4.5.3 from the CDN, activates jQuery, and disables template processing for the JavaScript distribution.
 ** WDK now registers its bundled jQuery, jQuery Countdown, Bootstrap 3, Font Awesome 5, React and React DOM distributions with template processing disabled, preserving their source when loaded inline.
 ** Refreshed the Font Awesome 4.7.0 CSS and WOFF2 distribution from upstream, retaining the WDK local font URL and explicitly blocking fallback glyphs while the icon font loads. 4.7.0 remains the final Font Awesome 4 release.
 ** Updated the bundled React and React DOM distributions from 16.14.0 to 19.3.1. CReactElement now uses reusable React roots through RenderReactElement(), preserving synchronous mounting for existing WDK initialization code.
