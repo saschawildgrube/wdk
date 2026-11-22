@@ -9,3 +9,4 @@ LEVEL	;CONTEXT									;LABEL				 														;CONDITIONS
 1			;devtools-sslcheck				;?TID_NAVIGATION_DEVTOOLS-SSLCHECK?				;
 1			;devtools-domaincheck			;?TID_NAVIGATION_DEVTOOLS-DOMAINCHECK?		;
 1			;devtools-localenavigator	;?TID_NAVIGATION_DEVTOOLS-LOCALENAVIGATOR?;
+1;devtools-fontawesome5;?TID_NAVIGATION_DEVTOOLS-FONTAWESOME5?;

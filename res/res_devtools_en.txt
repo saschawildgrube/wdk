@@ -40,3 +40,7 @@ TID_TEXT_DEVTOOLS-LOCALENAVIGATOR
 Browse the supported countries, languages, currencies and locales.
 TID_TEXT_DEVTOOLS-REFERENCEDESIGN
 This serves as a design reference page.
+TID_NAVIGATION_DEVTOOLS-FONTAWESOME5
+Font Awesome 5
+TID_TEXT_DEVTOOLS-FONTAWESOME5
+Browse Font Awesome Free 5.15.4. Hover over an icon or focus it with the keyboard to see its available Solid (fas), Regular (far), or Brands (fab) variants.
