@@ -5675,7 +5675,7 @@
 			if (StringCheckCharSet($strConversionID,CHARSET_NUMERIC) != true)
 			{
 				return false;
-			}
+			} 
 			$this->AddJavaScript('google-conversion-params');
 			$this->AddJavaScriptURL('google-conversion','https://www.googleadservices.com/pagead/conversion.js');
 			$this->SetOutputItem("GOOGLECONVERSION_CONVERSIONID",$strConversionID);
@@ -5686,7 +5686,7 @@
 
 		function ActivateJQuery()
 		{
-			$this->AddJavaScript('jquery','jquery-3.5.1.min', false);
+			$this->AddJavaScript('jquery','jquery-3.8.0.min', false);
 
 		}		
 
